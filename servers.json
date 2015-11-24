@@ -1,0 +1,9 @@
+{
+	"AllowControl": true,
+	"DisablePermission": false,
+	"Servers":
+	[
+		"example1.corp.local",
+		"example2.corp.local"
+	]
+}

@@ -1,0 +1,5 @@
+/packages
+/ShadowForm/*.user
+/ShadowForm/bin
+/ShadowForm/obj
+/.vs/ShadowForm/v14/*.suo

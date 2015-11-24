@@ -10,6 +10,7 @@ There have been a number of Powershell scripts for Shadowing outside of Server M
 Administration rights on other TS Infrastructure hosts (Such as Brokers) is not required.
 
 **Shadowing without Admin Rights**
+
 You can grant access via WMIC to Shadow to a user or group using the following command:
 
 wmic /namespace:\\root\CIMV2\TerminalServices PATH Win32_TSPermissionsSetting WHERE (TerminalName="RDP-Tcp") CALL AddAccount "domain\accountname",2

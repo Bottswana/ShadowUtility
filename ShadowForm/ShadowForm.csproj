@@ -103,7 +103,6 @@
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
     <None Include="Resources\refresh.png" />
-    <None Include="Resources\refresh.ico" />
     <None Include="Resources\mstsc.ico" />
   </ItemGroup>
   <ItemGroup>

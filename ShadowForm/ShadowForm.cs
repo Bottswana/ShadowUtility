@@ -13,10 +13,14 @@ namespace RemoteDesktopShadow
 		private SettingsLoader _Settings;
 		private ArrayList _DataSource;
 
-		public ShadowForm()
+		public ShadowForm(string[] args)
 		{
+			// Load Configuration
+			var ConfigPath = ( args.Length >= 1 ) ? args[0] : "ShadowUtility.json";
+			_Settings = SettingsLoader.LoadConfiguration(ConfigPath);
+
+			// Initialise
 			InitializeComponent();
-			_Settings = SettingsLoader.LoadConfiguration("servers.json");
 			_ServerMap = new Dictionary<int, string>();
 			_DataSource = new ArrayList();
 
@@ -138,9 +142,6 @@ namespace RemoteDesktopShadow
 						Arguments = CommandString
 					}
 				}.Start();
-
-				// Exit Application
-				Application.Exit();
 			}
 		}
 

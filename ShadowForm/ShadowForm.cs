@@ -27,8 +27,8 @@ namespace RemoteDesktopShadow
 			if( _Settings != null && !_Settings.AllowControl )
 			{
 				// Remove Control Permission
-				ControlBox.Checked = false;
-				ControlBox.Enabled = false;
+				ControlBox1.Checked = false;
+				ControlBox1.Enabled = false;
 			}
 			if( _Settings != null && _Settings.DisablePermission )
 			{
@@ -39,6 +39,7 @@ namespace RemoteDesktopShadow
 
 			// Load Users into Form
 			_LoadUsersFromServers();
+			UserBox.ClearSelected();
 		}
 		#endregion Initialisation
 
@@ -55,32 +56,30 @@ namespace RemoteDesktopShadow
 			var TSManager = new TerminalServicesManager();
 
 			// Foreach server in the collection, find active sessions
-			try
+			int pos = 0;
+			foreach( var Server in _Settings.Servers )
 			{
-				int pos = 0;
-				foreach( var Server in _Settings.Servers )
+				try
 				{
-					using( var thisServer = TSManager.GetRemoteServer(Server) )
+					using var thisServer = TSManager.GetRemoteServer(Server);
+					thisServer.Open();
+					
+					foreach( var tSession in thisServer.GetSessions() )
 					{
-						thisServer.Open();
-						foreach( var tSession in thisServer.GetSessions() )
-						{
-							if( tSession.UserName.Length <= 0 ) continue; // Dont want ghost entries
+						if( tSession.UserName.Length <= 0 ) continue; // Dont want ghost entries
 
-							string StatusText = ( tSession.ConnectionState == ConnectionState.Idle ) ? " IDLE" : ( (tSession.ConnectionState == ConnectionState.Disconnected) ? " DISCONNECTED" : "");
-							var Data = new KeyValuePair<int, String>(tSession.SessionId, string.Format("{0} ({1}){2}", tSession.UserAccount, Server, StatusText));
+						var StatusText = ( tSession.ConnectionState == ConnectionState.Idle ) ? " IDLE" : ( (tSession.ConnectionState == ConnectionState.Disconnected) ? " DISCONNECTED" : "");
+						var Data = new KeyValuePair<int, string>(tSession.SessionId, $"{tSession.UserAccount} ({Server}){StatusText}");
 
-							_ServerMap.Add(pos, Server);
-							_DataSource.Add(Data);
-							pos++;
-						}
+						_ServerMap.Add(pos, Server);
+						_DataSource.Add(Data);
+						pos++;
 					}
 				}
-			}
-			catch( Exception Ex )
-			{
-				MessageBox.Show("An error occoured loading user information:\n"+Ex.Message, "Application Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
+				catch( Exception Ex )
+				{
+					MessageBox.Show($"Unable to load user information\nServer: {Server}\nError: {Ex.Message}", "User Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
 			}
 
 			// Apply DataSource to Form
@@ -131,7 +130,7 @@ namespace RemoteDesktopShadow
 			{
 				// Shadow User
 				var Permission = ( AskPermission.Checked ) ? "" : "/noConsentPrompt ";
-				var Control = ( ControlBox.Checked ) ? "/control " : "";
+				var Control = ( ControlBox1.Checked ) ? "/control " : "";
 
 				var CommandString = string.Format("{0}{1}/shadow:{2} /v:{3}", Permission, Control, SelectedIndex, _FindServerForUser(SelectedPair));
 				var Process = new System.Diagnostics.Process()

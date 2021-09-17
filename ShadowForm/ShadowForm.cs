@@ -24,17 +24,26 @@ namespace RemoteDesktopShadow
 			_ServerMap = new Dictionary<int, string>();
 			_DataSource = new ArrayList();
 
-			if( _Settings != null && !_Settings.AllowControl )
+			if (_Settings != null )
 			{
-				// Remove Control Permission
-				ControlBox1.Checked = false;
-				ControlBox1.Enabled = false;
-			}
-			if( _Settings != null && _Settings.DisablePermission )
-			{
-				// Remove Request Permission
-				AskPermission.Checked = true;
-				AskPermission.Enabled = false;
+				if (_Settings.ControlDefault.HasValue )
+					ControlBox1.Checked = _Settings.ControlDefault.Value;
+
+				if (_Settings.PermissionsDefault.HasValue )
+					AskPermission.Checked = _Settings.PermissionsDefault.Value;
+
+				if(!_Settings.AllowControl )
+				{
+					// Remove Control Permission
+					ControlBox1.Checked = false;
+					ControlBox1.Enabled = false;
+				}
+				if(_Settings.DisablePermission )
+				{
+					// Remove Request Permission
+					AskPermission.Checked = true;
+					AskPermission.Enabled = false;
+				}
 			}
 
 			// Load Users into Form

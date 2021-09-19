@@ -58,7 +58,9 @@ namespace RemoteDesktopShadow
 		public String[] Servers { get; set; }
 
 		public bool AllowControl { get; set; }
+		public bool? ControlDefault { get; set; }
 		public bool DisablePermission { get; set; }
+		public bool? PermissionsDefault { get; set; }
 		#endregion Configuration Top-Level
     }
 }
